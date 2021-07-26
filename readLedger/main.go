@@ -20,14 +20,14 @@ var attrsToIndex = []blkstorage.IndexableAttr{
 	blkstorage.IndexableAttrTxValidationCode,
 }
 func main(){
-	conf := &Conf{"./chains",100000000000}
+	conf := &Conf{"chains",100000000000}
 	indexConfig := &blkstorage.IndexConfig{AttrsToIndex: attrsToIndex}
 	p := leveldbhelper.NewProvider(&leveldbhelper.Conf{DBPath: conf.getIndexDir()})
 	// create stats instance at provider level and pass to newFsBlockStore
 	stats := newStats( &disabled.Provider{})
 	provider := &FsBlockstoreProvider{conf, indexConfig, p, stats}
 
-	blkStore, err := provider.OpenBlockStore("channel2")
+	blkStore, err := provider.OpenBlockStore("mychannel")
 	if err != nil  {
 		fmt.Print("error")
 	}
@@ -38,6 +38,7 @@ func main(){
 	}
 
 	for i := uint64(0) ; i < blockInfo.Height ; i++ {
+		fmt.Println(blockInfo.Height)
 		block, err := blkStore.RetrieveBlockByNumber(i)
 
 		buf := new (bytes.Buffer)
