@@ -29,7 +29,7 @@ index
 ```
 
 
-## 执行,--channe 要解析的通道名称,--start 开始的区块高度,--end 结束的区块高度
+## 执行,--channel 要解析的通道名称,--start 开始的区块高度,--end 结束的区块高度
 ```
 $ ./parse --channel mychannel --start 0 --end 6
 ```
