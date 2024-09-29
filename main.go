@@ -12,8 +12,7 @@ import (
 	"github.com/hyperledger/fabric/common/ledger/blkstorage"
 	"github.com/hyperledger/fabric/common/ledger/util/leveldbhelper"
 	"github.com/hyperledger/fabric/common/metrics/disabled"
-	"github.com/lifegoeson/parseblockfiles/utils"
-	"os"
+	"github.com/lifegoeson/parseLedger/utils"
 )
 
 var attrsToIndex = []blkstorage.IndexableAttr{
@@ -31,7 +30,7 @@ func main(){
 	//inputPath := flag.String("in", "", "Input Path")
 	//outputPath := flag.String("out", "", "Output Path")
 
-	chlName := flag.String("channelName", "", "通道名称")
+	chlName := flag.String("channel", "", "通道名称")
 
 	start := flag.Int64("start", 0, "区块结束的高度")
 
@@ -41,6 +40,15 @@ func main(){
 
 	// 解析命令行参数
 	flag.Parse()
+
+	//fmt.Println(flag.Arg(1))
+	//fmt.Println(*start)
+	//fmt.Println(*end)
+
+	//if flag.Arg(1) {
+	//	fmt.Errorf("参数--channel不能为空")
+	//	os.Exit(1)
+	//}
 
 	conf := &utils.Conf{BlockStorageDir: "chains", MaxBlockfileSize: 100000000000}
 	indexConfig := &blkstorage.IndexConfig{AttrsToIndex: attrsToIndex}
@@ -52,8 +60,9 @@ func main(){
 	blkStore, err := provider.OpenBlockStore(*chlName)
 
 	if blkStore == nil{
-		fmt.Errorf("获取blkStore为空")
+		fmt.Println("获取blkStore为空")
 		return
+		//os.Exit(1)
 	}
 	if err != nil  {
 		fmt.Print("error")
@@ -69,6 +78,8 @@ func main(){
 		return
 	}
 
+	currentBlockHeight := int64(blockInfo.Height)
+
 	//fmt.Println("当前通道区块高度: ",blockInfo.Height)
 	var st,ed int64
 
@@ -78,7 +89,19 @@ func main(){
 		ed = *end
 	}else {
 		st = 0
-		ed = int64(blockInfo.Height)
+		ed = currentBlockHeight
+	}
+
+	if st < 0 {
+		st = 0
+	}
+
+	if ed < 0 {
+		ed = 0
+	}
+
+	if ed > currentBlockHeight {
+		ed = currentBlockHeight
 	}
 
 	//
@@ -94,7 +117,7 @@ func main(){
 
 		blockFilesPath := filepath.Join("blockfiles",*chlName)
 
-		err = CreateDirIfNotExists(blockFilesPath)
+		err = utils.CreateDirIfNotExists(blockFilesPath)
 
 		if err !=nil {
 			fmt.Println("获取blockfiles路径失败")
@@ -108,31 +131,9 @@ func main(){
 		if err != nil{
 			fmt.Println("write to file failure:",err)
 		}
+		fmt.Printf("解析区块%d成功\n",i)
 	}
 
 }
 
-func IsDirExists(path string) bool {
-	// 获取文件或文件夹的信息
-	info, err := os.Stat(path)
 
-	// 如果发生错误，并且错误是因为文件或目录不存在
-	if os.IsNotExist(err) {
-		return false
-	}
-
-	// 如果没有发生错误，判断它是否是一个目录
-	return info.IsDir()
-}
-
-func CreateDirIfNotExists(path string) error {
-	if !IsDirExists(path) {
-		// 如果目录不存在，则创建该目录
-		err := os.MkdirAll(path, os.ModePerm) // os.ModePerm 表示 0777 权限
-		if err != nil {
-			return err
-		}
-		fmt.Printf("Directory %s created successfully\n", path)
-	}
-	return nil
-}

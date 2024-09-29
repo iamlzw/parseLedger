@@ -1,4 +1,4 @@
-module github.com/lifegoeson/parseblockfiles
+module github.com/lifegoeson/parseLedger
 
 go 1.15
 

@@ -17,6 +17,7 @@ limitations under the License.
 package utils
 
 import (
+	"fmt"
 	"github.com/hyperledger/fabric/common/ledger/blkstorage"
 	"github.com/hyperledger/fabric/common/ledger/util"
 	"github.com/hyperledger/fabric/common/ledger/util/leveldbhelper"
@@ -49,7 +50,13 @@ func (p *FsBlockstoreProvider) CreateBlockStore(ledgerid string) (blkstorage.Blo
 // This method should be invoked only once for a particular ledgerid
 func (p *FsBlockstoreProvider) OpenBlockStore(ledgerid string) (blkstorage.BlockStore, error) {
 	indexStoreHandle := p.LeveldbProvider.GetDBHandle(ledgerid)
-	return newFsBlockStore(ledgerid, p.Conf, p.IndexConfig, indexStoreHandle, p.Stats), nil
+	fbs := newFsBlockStore(ledgerid, p.Conf, p.IndexConfig, indexStoreHandle, p.Stats)
+
+	if fbs == nil{
+		return nil, fmt.Errorf("构建FsBlockStore失败")
+	}
+
+	return fbs, nil
 }
 
 // Exists tells whether the BlockStore with given id exists

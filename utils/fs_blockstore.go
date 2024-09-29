@@ -39,6 +39,10 @@ func newFsBlockStore(id string, conf *Conf, indexConfig *blkstorage.IndexConfig,
 	dbHandle *leveldbhelper.DBHandle, stats *stats) *fsBlockStore {
 	fileMgr := newBlockfileMgr(id, conf, indexConfig, dbHandle)
 
+	if fileMgr == nil{
+		return nil
+	}
+
 	// create ledgerStats and initialize blockchain_height stat
 	ledgerStats := stats.ledgerStats(id)
 	info := fileMgr.getBlockchainInfo()

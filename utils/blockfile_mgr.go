@@ -91,10 +91,16 @@ func newBlockfileMgr(id string, conf *Conf, indexConfig *blkstorage.IndexConfig,
 	logger.Debugf("newBlockfileMgr() initializing file-based block storage for ledger: %s ", id)
 	//Determine the root directory for the blockfile storage, if it does not exist create it
 	rootDir := conf.GetLedgerBlockDir(id)
-	_, err := util.CreateDirIfMissing(rootDir)
-	if err != nil {
-		panic(fmt.Sprintf("Error creating block storage root dir [%s]: %s", rootDir, err))
+
+	//如果文件不存在,则返回错误
+	if !IsDirExists(rootDir) {
+		fmt.Errorf("ledgerid %s不存在",id)
+		return nil
 	}
+	//_, err := util.CreateDirIfMissing(rootDir)
+	//if err != nil {
+	//	panic(fmt.Sprintf("Error creating block storage root dir [%s]: %s", rootDir, err))
+	//}
 	// Instantiate the manager, i.e. blockFileMgr structure
 	mgr := &blockfileMgr{rootDir: rootDir, conf: conf, db: indexStore}
 
