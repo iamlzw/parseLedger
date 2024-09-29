@@ -115,7 +115,7 @@ func main(){
 			fmt.Errorf("malformed block contents: %s", err)
 		}
 
-		blockFilesPath := filepath.Join("block files",*chlName)
+		blockFilesPath := filepath.Join("blockfiles",*chlName)
 
 		err = utils.CreateDirIfNotExists(blockFilesPath)
 
@@ -133,7 +133,6 @@ func main(){
 		}
 		fmt.Printf("解析区块%d成功\n",i)
 	}
-
 }
 
 
