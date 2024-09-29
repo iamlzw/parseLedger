@@ -115,12 +115,12 @@ func main(){
 			fmt.Errorf("malformed block contents: %s", err)
 		}
 
-		blockFilesPath := filepath.Join("blockfiles",*chlName)
+		blockFilesPath := filepath.Join("block files",*chlName)
 
 		err = utils.CreateDirIfNotExists(blockFilesPath)
 
 		if err !=nil {
-			fmt.Println("获取blockfiles路径失败")
+			fmt.Println("获取block files路径失败")
 			return
 		}
 

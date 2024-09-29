@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 )
-
+//判断文件是否存在
 func IsDirExists(path string) bool {
 	// 获取文件或文件夹的信息
 	info, err := os.Stat(path)
