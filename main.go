@@ -31,26 +31,16 @@ func main(){
 	//inputPath := flag.String("in", "", "Input Path")
 	//outputPath := flag.String("out", "", "Output Path")
 
-	chlName := flag.String("channelName", "", "channel name")
+	chlName := flag.String("channelName", "", "通道名称")
 
+	start := flag.Int64("start", 0, "区块结束的高度")
 
-	start := flag.String("start", "", "start block index")
+	end := flag.Int64("end", 0, "区块开始的高度")
 
-
-	end := flag.String("end", "", "end block index")
+	all := flag.Bool("all", false, "是否解析通道的所有区块")
 
 	// 解析命令行参数
 	flag.Parse()
-
-	// 检查输入和输出文件参数是否为空
-	//if *inputPath == "" || *outputPath == "" {
-	//	fmt.Println("Usage: program --in <inputfile> --out <outputfile>")
-	//	os.Exit(1)
-	//}
-
-	// 打印输入和输出文件路径
-	//fmt.Printf("Input file: %s\n", *inputFile)
-	//fmt.Printf("Output file: %s\n", *outputFile)
 
 	conf := &utils.Conf{BlockStorageDir: "chains", MaxBlockfileSize: 100000000000}
 	indexConfig := &blkstorage.IndexConfig{AttrsToIndex: attrsToIndex}
@@ -79,12 +69,20 @@ func main(){
 		return
 	}
 
-	fmt.Println("当前通道区块高度: ",blockInfo.Height)
+	//fmt.Println("当前通道区块高度: ",blockInfo.Height)
+	var st,ed int64
 
-	startInt64, err := strconv.ParseInt(*start, 10, 64)
-	endInt64, err := strconv.ParseInt(*end, 10, 64)
+	//是否解析通道所有的区块数据
+	if !*all {
+		st = *start
+		ed = *end
+	}else {
+		st = 0
+		ed = int64(blockInfo.Height)
+	}
+
 	//
-	for i := startInt64 ; i < endInt64 ; i++ {
+	for i := st; i < ed ; i++ {
 		//fmt.Println(blockInfo.Height)
 		block, err := blkStore.RetrieveBlockByNumber(uint64(i))
 
